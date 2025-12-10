@@ -134,12 +134,19 @@ uniq⊎ (inr x) = refl
 rec× : {A B C : Type} → (A → B → C) → A × B → C
 rec× = snd currying
 
-elim× : {A B : Type} (C : A × B → Type) → ((x : A) → (y : B) → C (x , y)) → (x : A × B) → C x
-elim× C f (x , y) = f x y
+-- elim× : {A B : Type} (C : A × B → Type) → ((x : A) → (y : B) → C (x , y)) → (p : A × B) → C p
+-- elim× C f (x , y) = f x y
 
--- comp× : {A B : Type} (C : A × B → Type) (f : (x : A) → (y : B) → C (x , y)) ((x , y) : A × B) → elim× C f g (x , y) ≡ (f x , g y)
+-- elim ∘ constructor = ?
+comp× : {A B : Type} (x : A) (y : B) -> (fst (x , y) ≡ x) × (snd (x , y) ≡ y)
+comp× x y = refl , refl
+
+-- comp× : {A B : Type} (C : A × B → Type) (f : (x : A) → (y : B) → C (x , y)) (p : A × B) → elim× C f p
 -- comp× = ?
 
--- uniq× : {A B : Type} (x : A × B) → elim× (λ _ → A × B) inl inr x ≡ x
+-- constructor ∘ elim = ?
+uniq× : {A B : Type} (x : A × B) → x ≡ (fst x , snd x)
+uniq× x = refl
+
 -- uniq× (inl x) = refl
 -- uniq× (inr x) = refl
