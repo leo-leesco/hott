@@ -36,6 +36,9 @@ pred (suc x) = x
 cong : {A B : Type} (f : A → B) {x y : A} → x ≡ y → f x ≡ f y
 cong f refl = refl
 
+unitl+ : (n : ℕ) → zero + n ≡ n
+unitl+ n = refl
+
 unitr+ : (n : ℕ) → n + zero ≡ n
 unitr+ zero = refl
 unitr+ (suc n) = suc (n + zero) ≡⟨ cong suc (unitr+ n) ⟩
