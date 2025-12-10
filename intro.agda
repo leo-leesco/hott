@@ -115,3 +115,31 @@ double-even (suc n) = subst Even (
  suc (suc (n + n)) ≡⟨ cong suc (sym (+suc n n)) ⟩
  suc (n + suc n) ∎
  ) (evenSuc (double-even n))
+
+rec⊎ : {A B C : Type} → (A → C) → (B → C) → A ⊎ B → C
+rec⊎ f g (inl x) = f x
+rec⊎ f g (inr x) = g x
+
+elim⊎ : {A B : Type} (C : A ⊎ B → Type) → ((x : A) → C (inl x)) → ((x : B) → C (inr x)) → (x : A ⊎ B) → C x
+elim⊎ C f g (inl x) = f x
+elim⊎ C f g (inr x) = g x
+
+comp⊎l : {A B : Type} (C : A ⊎ B → Type) (f : (x : A) → C (inl x)) (g : (x : B) → C (inr x)) (x : A) → elim⊎ C f g (inl x) ≡ f x
+comp⊎l C f g x = refl
+
+uniq⊎ : {A B : Type} (x : A ⊎ B) → elim⊎ (λ _ → A ⊎ B) inl inr x ≡ x
+uniq⊎ (inl x) = refl
+uniq⊎ (inr x) = refl
+
+rec× : {A B C : Type} → (A → B → C) → A × B → C
+rec× = snd currying
+
+elim× : {A B : Type} (C : A × B → Type) → ((x : A) → (y : B) → C (x , y)) → (x : A × B) → C x
+elim× C f (x , y) = f x y
+
+-- comp× : {A B : Type} (C : A × B → Type) (f : (x : A) → (y : B) → C (x , y)) ((x , y) : A × B) → elim× C f g (x , y) ≡ (f x , g y)
+-- comp× = ?
+
+-- uniq× : {A B : Type} (x : A × B) → elim× (λ _ → A × B) inl inr x ≡ x
+-- uniq× (inl x) = refl
+-- uniq× (inr x) = refl
