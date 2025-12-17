@@ -140,6 +140,12 @@ rec× = snd currying
 -- elim× : {A B : Type} (C : A × B → Type) → ((x : A) → (y : B) → C (x , y)) → (p : A × B) → C p
 -- elim× C f (x , y) = f x y
 
+elim×A : {A B : Type} -> A × B -> A
+elim×A = fst
+
+elim×B : {A B : Type} -> A × B -> B
+elim×B = snd
+
 -- elim ∘ constructor = ?
 comp× : {A B : Type} (x : A) (y : B) -> (fst (x , y) ≡ x) × (snd (x , y) ≡ y)
 comp× x y = refl , refl
