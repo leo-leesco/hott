@@ -69,3 +69,38 @@ rotate∙≡ p q p' α = sym p ∙ p' ≡⟨ cong (λ { x → sym p ∙ x }) (sy
 
 subst : {A : Type ℓ} (B : A → Type ℓ') {x y : A} (p : x ≡ y) → B x → B y
 subst B refl Bx = Bx
+
+true≢false : ¬ true ≡ false
+true≢false tf = subst (λ { false → ⊥
+                         ; true → true ≡ false }) tf tf
+
+transport : {A B : Type ℓ} → A ≡ B → A → B
+transport e a = subst (λ z → z) e a
+
+subst' : {A : Type ℓ} (B : A → Type ℓ') {x y : A} (p : x ≡ y) → B x → B y
+subst' B p x = transport (cong B p) x
+
+substComposite : {A : Type ℓ} (B : A → Type ℓ) {x y z : A} (p : x ≡ y) (q : y ≡ z) (x' : B x) → subst B (p ∙ q) x' ≡ subst B q (subst B p x')
+substComposite B refl refl x' = refl
+
+substConst : {ℓ ℓ' : Level} {A : Type ℓ} {B : Type ℓ'} {x y : A} (p : x ≡ y) (x' : B) → subst (λ _ → B) p x' ≡ x'
+substConst refl x' = refl
+
+substInPathsL : {A : Type ℓ} {x y y' : A} (p : x ≡ y) (q : y ≡ y') → subst (λ y → x ≡ y) q p ≡ p ∙ q
+substInPathsL refl refl = refl
+
+substInPathsR : {A : Type ℓ} {x x' y : A} (p : x ≡ x') (q : x ≡ y) → subst (λ x → x ≡ y) p q ≡ sym p ∙ q
+substInPathsR refl refl = refl
+
+substInPaths : {A : Type ℓ} {B : Type ℓ'}  {x y : A} (f g : A → B) (p : x ≡ y) (q : f x ≡ g x) → subst (λ x → f x ≡ g x) p q ≡ sym (cong f p) ∙ q ∙ cong g p
+substInPaths f g refl q = subst (λ x₁ → f x₁ ≡ g x₁) refl q ≡⟨ refl ⟩
+ q ≡⟨ rUnit q ⟩
+ q ∙ refl ≡⟨ lUnit (trans q refl) ⟩
+ refl ∙ q ∙ refl ≡⟨ refl ⟩
+ sym (cong f refl) ∙ q ∙ cong g refl ∎
+
+substInPathsL' : {A : Type ℓ} {B : Type ℓ'}  {x x' : A} (f : A → B) {y : B} (p : x ≡ x') (q : f x ≡ y) → subst (λ x → f x ≡ y) p q ≡ sym (cong f p) ∙ q
+substInPathsL' {ℓ} {ℓ'} {A} {B} {x} {x'} f {y} refl q = subst (λ x₁ → f x₁ ≡ y) refl q ≡⟨ refl ⟩
+ q  ≡⟨ lUnit q ⟩
+ refl ∙ q  ≡⟨ refl ⟩
+ sym (cong f refl) ∙ q ∎
