@@ -43,6 +43,9 @@ cong f refl = refl
 ≡× : {A : Type ℓ} {B : Type ℓ'} {x x' : A} {y y' : B} → (x , y) ≡ (x' , y') → (x ≡ x') × (y ≡ y')
 ≡× xy≡x'y' = cong fst xy≡x'y' , cong snd xy≡x'y'
 
+×unpack : {A : Type ℓ} {B : Type ℓ'} {x x' : A} {y y' : B}  → (p : x ≡ x') → (q : y ≡ y') → (x , y) ≡ (x' , y')
+×unpack refl refl = refl
+
 congConst : {A : Type ℓ} {B : Type ℓ'} {x' : B} {x y : A} (p : x ≡ y) → cong (λ _ → x') p ≡ refl
 congConst refl = refl
 
@@ -58,7 +61,8 @@ congId refl = refl
 cong∘ : {A : Type ℓ} {B : Type ℓ'} {C : Type ℓ''} {x y : A} (f : A -> B) (g : B -> C) (p : x ≡ y) -> cong (g ∘ f) p ≡ cong g (cong f p)
 cong∘ f g refl = refl
 
--- cong₂ : {A A' : Type ℓ} {B : Type ℓ'} {x y x' y' : A} (f : A × A' -> B) (p : x ≡ y) (q : x' ≡ y') -> cong f (p , q)
+cong₂ : {A A' : Type ℓ} {B : Type ℓ'} {x y : A} {x' y' : A'} (f : A × A' -> B) (p : x ≡ y) (q : x' ≡ y') -> f (x , x') ≡ f (y , y')
+cong₂ f p q = cong f (×unpack p q)
 
 rotate∙≡ : {A : Type ℓ} {x y y' : A} (p : x ≡ y) (q : y ≡ y') (p' : x ≡ y') → p ∙ q ≡ p' → sym p ∙ p' ≡ q
 rotate∙≡ p q p' α = sym p ∙ p' ≡⟨ cong (λ { x → sym p ∙ x }) (sym α) ⟩
@@ -125,3 +129,24 @@ funTypeTranspL refl f = refl
 
 funTypeTransp : {A : Type ℓ} (B : A → Type ℓ') (C : A → Type ℓ'') {x y : A} (p : x ≡ y) (f : B x → C x) → PathOver (λ x → B x → C x) p f (subst C p ∘ f ∘ subst B (sym p))
 funTypeTransp B C refl f = refl
+
+UIP : Type₁
+UIP = {A : Type} {x y : A} (p q : x ≡ y) → p ≡ q
+
+URP : Type₁
+URP = {A : Set} {x : A} (p : x ≡ x) → p ≡ refl
+
+K : Type₁
+K = {A : Type} {x : A} (P : (x ≡ x) → Set) → P refl → (p : x ≡ x) → P p
+
+UIP→URP : UIP → URP
+UIP→URP f {A} {x} p = f p refl
+
+URP→UIP : URP → UIP
+URP→UIP f {A} {x} {y} p refl = f p
+
+URP→K : URP → K
+URP→K f {A} {x} P Prefl p = transport (cong P (sym (f p))) Prefl
+
+K→URP : K → URP
+K→URP f {A} {x} p = f (λ { e → e ≡ refl }) refl p
