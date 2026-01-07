@@ -104,3 +104,24 @@ substInPathsL' {ℓ} {ℓ'} {A} {B} {x} {x'} f {y} refl q = subst (λ x₁ → f
  q  ≡⟨ lUnit q ⟩
  refl ∙ q  ≡⟨ refl ⟩
  sym (cong f refl) ∙ q ∎
+
+PathOver : {A : Type ℓ} (B : A → Type ℓ') {x y : A} (p : x ≡ y) (x' : B x) (y' : B y) → Type ℓ'
+PathOver B p x' y' = subst B p x' ≡ y'
+
+×≡ : {A : Type ℓ} {B : Type ℓ'} {x x' : A} {y y' : B} → (p : x ≡ x') (q : y ≡ y') → (x , y) ≡ (x' , y')
+×≡ refl refl = refl
+
+Σ≡ : {A : Type ℓ} {B : A → Type ℓ'} {x x' : A} (p : x ≡ x') {y : B x} {y' : B x'} → PathOver B p y y' → (x , y) ≡ (x' , y')
+Σ≡ refl refl = refl
+
+congP : {A : Type ℓ} (B : A → Type ℓ') (f : (x : A) → B x) {x y : A} (p : x ≡ y) → PathOver B p (f x) (f y)
+congP B f refl = refl
+
+funTypeTranspR : {A : Type ℓ} {B B' : Type ℓ'} (p : B ≡ B') (f : A → B) → subst (λ X → A → X) p f ≡ transport p ∘ f
+funTypeTranspR refl f = refl
+
+funTypeTranspL : {A A' : Type ℓ} {B : Type ℓ'} (p : A ≡ A') (f : A → B) → subst (λ X → X → B) p f ≡ f ∘ transport (sym p)
+funTypeTranspL refl f = refl
+
+funTypeTransp : {A : Type ℓ} (B : A → Type ℓ') (C : A → Type ℓ'') {x y : A} (p : x ≡ y) (f : B x → C x) → PathOver (λ x → B x → C x) p f (subst C p ∘ f ∘ subst B (sym p))
+funTypeTransp B C refl f = refl
