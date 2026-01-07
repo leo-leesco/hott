@@ -43,8 +43,8 @@ cong f refl = refl
 ≡× : {A : Type ℓ} {B : Type ℓ'} {x x' : A} {y y' : B} → (x , y) ≡ (x' , y') → (x ≡ x') × (y ≡ y')
 ≡× xy≡x'y' = cong fst xy≡x'y' , cong snd xy≡x'y'
 
-×unpack : {A : Type ℓ} {B : Type ℓ'} {x x' : A} {y y' : B}  → (p : x ≡ x') → (q : y ≡ y') → (x , y) ≡ (x' , y')
-×unpack refl refl = refl
+×pack : {A : Type ℓ} {B : Type ℓ'} {x x' : A} {y y' : B}  → (p : x ≡ x') → (q : y ≡ y') → (x , y) ≡ (x' , y')
+×pack refl refl = refl
 
 congConst : {A : Type ℓ} {B : Type ℓ'} {x' : B} {x y : A} (p : x ≡ y) → cong (λ _ → x') p ≡ refl
 congConst refl = refl
@@ -62,7 +62,7 @@ cong∘ : {A : Type ℓ} {B : Type ℓ'} {C : Type ℓ''} {x y : A} (f : A -> B)
 cong∘ f g refl = refl
 
 cong₂ : {A A' : Type ℓ} {B : Type ℓ'} {x y : A} {x' y' : A'} (f : A × A' -> B) (p : x ≡ y) (q : x' ≡ y') -> f (x , x') ≡ f (y , y')
-cong₂ f p q = cong f (×unpack p q)
+cong₂ f p q = cong f (×pack p q)
 
 rotate∙≡ : {A : Type ℓ} {x y y' : A} (p : x ≡ y) (q : y ≡ y') (p' : x ≡ y') → p ∙ q ≡ p' → sym p ∙ p' ≡ q
 rotate∙≡ p q p' α = sym p ∙ p' ≡⟨ cong (λ { x → sym p ∙ x }) (sym α) ⟩
@@ -70,6 +70,9 @@ rotate∙≡ p q p' α = sym p ∙ p' ≡⟨ cong (λ { x → sym p ∙ x }) (sy
   (sym p ∙ p) ∙ q ≡⟨ cong (λ { x → x ∙ q }) (lCancel p) ⟩
   refl ∙ q ≡⟨ sym (lUnit q) ⟩
   q ∎
+
+happly : {A : Type ℓ} {B : A → Type ℓ'} {f g : (x : A) → B x} → (p : f ≡ g) → (x : A) → f x ≡ g x
+happly refl x = refl
 
 subst : {A : Type ℓ} (B : A → Type ℓ') {x y : A} (p : x ≡ y) → B x → B y
 subst B refl Bx = Bx
