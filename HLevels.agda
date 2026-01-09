@@ -59,8 +59,8 @@ isProp' : Type ℓ → Type ℓ
 isProp' A = (x y : A) → isContr (x ≡ y)
 
 isProp'→isProp : {A : Type ℓ} → isProp' A → isProp A
-isProp'→isProp f x y = {! !}
+isProp'→isProp f x y with f x y
+... | e , _ = e
 
 isProp→isProp' : {A : Type ℓ} → isProp A → isProp' A
-isProp→isProp' f x y = {! !}
-
+isProp→isProp' f x y = isProp→isContr (isContr→isProp' λ { refl → isContr→isContrPath (x , f x) x x }) (f x y)
