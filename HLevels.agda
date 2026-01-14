@@ -121,3 +121,9 @@ subInj {ℓ} {A} P {x , π} {y , ρ} p = Σ≡ p (isContr→isProp (ρ , λ { σ
  where
  unif : {A : Type ℓ} (P : A → hProp ℓ) {y : A} -> (x₁ y₁ : P y .fst) → x₁ ≡ y₁
  unif P x₁ y₁ = P _ .snd x₁ y₁
+
+isSet : Type ℓ → Type ℓ
+isSet A = (x y : A) → isProp (x ≡ y)
+
+isSet⊤ : isSet ⊤
+isSet⊤ tt tt refl refl = refl
