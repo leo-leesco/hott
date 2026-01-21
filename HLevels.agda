@@ -127,3 +127,35 @@ isSet A = (x y : A) → isProp (x ≡ y)
 
 isSet⊤ : isSet ⊤
 isSet⊤ tt tt refl refl = refl
+
+isSetBool : isSet Bool
+isSetBool false false refl refl = refl
+isSetBool true true refl refl = refl
+
+isSetℕ : isSet ℕ
+isSetℕ zero zero refl refl = refl
+isSetℕ (suc n) (suc m) q p =
+ let
+  p' : n ≡ m
+  p' = sucInj p
+
+  q' : n ≡ m
+  q' = sucInj q
+ in
+
+ {! !}
+
+ where
+ sucInj : {n m : ℕ} (p : suc n ≡ suc m) → n ≡ m
+ sucInj refl = refl
+ congSuc : {n m : ℕ} (p : n ≡ m) → suc n ≡ suc m
+ congSuc refl = refl
+
+isProp→isSet : {A : Type ℓ} → isProp A → isSet A
+isProp→isSet contr x y p q = isContr→isProp (isProp→isContrPath contr x y) p q
+
+isSet× : {A : Type ℓ} {B : Type ℓ'} → isSet A → isSet B → isSet (A × B)
+isSet× f g (a , a') (b , b') p q = isContr→isProp {!isProp→isContrPath !} {! !} {! !}
+
+isPropIsSet : {A : Type ℓ} → isProp (isSet A)
+isPropIsSet f g = funExt λ { x → funExt λ { y → isPropIsProp (f x y) (g x y) } }
