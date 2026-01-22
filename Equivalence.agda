@@ -106,4 +106,26 @@ equivEq : {A : Type ℓ} {B : Type ℓ'} {e e' : A ≃ B} → equivFun e ≡ equ
 equivEq {ℓ} {ℓ'} {A} {B} {f , fL , fR} {g , gL , gR} refl with isEquiv→hasQInv f (fL , fR) | isEquiv→hasQInv g (gL , gR)
 ... | f' , fleft , fright | g' , gleft , gright = Σ≡ refl (Σ≡ {! !} {! !})
 
+points≃ : (A : Type ℓ) → A ≃ (⊤ → A)
+points≃ A = (λ z z₁ → z) , ((λ z → z tt) , λ x → refl) , (λ z → id z tt) , (λ x → refl)
 
+isContr→≃⊤ : {A : Type} → isContr A → A ≃ ⊤
+isContr→≃⊤ (x , f) = (λ _ → tt) , ((λ _ → x) , (λ x₁ → f (id x₁))) , (λ z → x) , (λ x₁ → refl)
+
+≃⊤→isContr : {A : Type} → A ≃ ⊤ → isContr A
+≃⊤→isContr (f , (g , left) , (h , right)) = g tt , left
+
+not : Bool → Bool
+not false = true
+not true = false
+
+not≃ : Bool ≃ Bool
+not≃ = not , (not , λ { false → refl
+                      ; true → refl }) , not , λ { false → refl
+                                                 ; true → refl }
+
+×≡Equiv : {A : Type ℓ} {B : Type ℓ} {x x' : A} {y y' : B} → ((x , y) ≡ (x' , y')) ≃ (x ≡ x') × (y ≡ y')
+×≡Equiv = (λ { refl → refl , refl }) , ((λ { (x≡ , y≡) → ×≡ x≡ y≡ }) , λ { refl → refl }) , (λ { (x≡ , y≡) → ×≡ x≡ y≡ }) , λ { (refl , refl) → refl }
+
+Σ≡Equiv : {A : Type ℓ} (B : A → Type ℓ') {x x' : A} {y : B x} {y' : B x'} → ((x , y) ≡ (x' , y')) ≃ Σ (x ≡ x') (λ p → PathOver B p y y')
+Σ≡Equiv B = (λ { refl → refl , refl }) , ((λ { (x≡ , y≡) → Σ≡ x≡ y≡ }) , λ { refl → refl }) , (λ { (x≡ , y≡) → Σ≡ x≡ y≡ }) , λ { (refl , refl) → refl }
