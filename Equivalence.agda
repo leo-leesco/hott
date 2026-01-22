@@ -27,33 +27,33 @@ infixr 4 _~_
 ~RWhisk p g x = cong g (p x)
 
 module _ {A : Type ℓ} {B : Type ℓ'} (f : A → B) where
-  hasLInv : Type (ℓ-max ℓ ℓ')
-  hasLInv = Σ (B → A) (λ g → g ∘ f ~ id)
+ hasLInv : Type (ℓ-max ℓ ℓ')
+ hasLInv = Σ (B → A) (λ g → g ∘ f ~ id)
 
-  hasRInv : Type (ℓ-max ℓ ℓ')
-  hasRInv = Σ (B → A) (λ g → f ∘ g ~ id)
+ hasRInv : Type (ℓ-max ℓ ℓ')
+ hasRInv = Σ (B → A) (λ g → f ∘ g ~ id)
 
-  hasQInv : Type (ℓ-max ℓ ℓ')
-  hasQInv = Σ (B → A) (λ g → (g ∘ f ~ id) × (f ∘ g ~ id))
+ hasQInv : Type (ℓ-max ℓ ℓ')
+ hasQInv = Σ (B → A) (λ g → (g ∘ f ~ id) × (f ∘ g ~ id))
 
-  isEquiv : Type (ℓ-max ℓ ℓ')
-  isEquiv = hasLInv × hasRInv
+ isEquiv : Type (ℓ-max ℓ ℓ')
+ isEquiv = hasLInv × hasRInv
 
-  hasQInv→isEquiv : hasQInv → isEquiv
-  hasQInv→isEquiv (g , left , right) = (g , left) , g , right
+ hasQInv→isEquiv : hasQInv → isEquiv
+ hasQInv→isEquiv (g , left , right) = (g , left) , g , right
 
-  isEquiv→hasQInv : isEquiv → hasQInv
-  isEquiv→hasQInv ((g , left) , h , right) = g , left , λ { x → f (g x) ≡⟨ cong f (unicity x) ⟩
-   f (h x) ≡⟨ right x ⟩
-   id x ∎}
-   where
-   unicity : g ~ h
-   unicity x = g x ≡⟨ cong g (sym (right x)) ⟩
-    g (f (h x)) ≡⟨ left (h x) ⟩
-    h x ∎
+ isEquiv→hasQInv : isEquiv → hasQInv
+ isEquiv→hasQInv ((g , left) , h , right) = g , left , λ { x → f (g x) ≡⟨ cong f (unicity x) ⟩
+  f (h x) ≡⟨ right x ⟩
+  id x ∎}
+  where
+  unicity : g ~ h
+  unicity x = g x ≡⟨ cong g (sym (right x)) ⟩
+   g (f (h x)) ≡⟨ left (h x) ⟩
+   h x ∎
 
-  postulate
-   isPropIsEquiv : isProp isEquiv
+ postulate
+  isPropIsEquiv : isProp isEquiv
 
 Iso : (A : Type ℓ) (B : Type ℓ') → Type (ℓ-max ℓ ℓ')
 Iso A B = Σ (A → B) hasQInv
@@ -63,17 +63,17 @@ A ≃ B = Σ (A → B) isEquiv
 infix 4 _≃_
 
 module _ {A : Type ℓ} {B : Type ℓ'} (e : A ≃ B) where
-  equivFun : A → B
-  equivFun = fst e
+ equivFun : A → B
+ equivFun = fst e
 
-  invEq : B → A
-  invEq = isEquiv→hasQInv equivFun (snd e) .fst
+ invEq : B → A
+ invEq = isEquiv→hasQInv equivFun (snd e) .fst
 
-  retEq : invEq ∘ equivFun ~ id
-  retEq = isEquiv→hasQInv equivFun (snd e) .snd .fst
+ retEq : invEq ∘ equivFun ~ id
+ retEq = isEquiv→hasQInv equivFun (snd e) .snd .fst
 
-  secEq : equivFun ∘ invEq ~ id
-  secEq = isEquiv→hasQInv equivFun (snd e) .snd .snd
+ secEq : equivFun ∘ invEq ~ id
+ secEq = isEquiv→hasQInv equivFun (snd e) .snd .snd
 
 isoToEquiv : {A : Type ℓ} {B : Type ℓ'} → Iso A B → A ≃ B
 isoToEquiv (f , g , left , right) = f , hasQInv→isEquiv f (g , left , right)
