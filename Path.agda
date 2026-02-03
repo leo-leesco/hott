@@ -75,14 +75,14 @@ happly : {A : Type ℓ} {B : A → Type ℓ'} {f g : (x : A) → B x} → (p : f
 happly refl x = refl
 
 subst : {A : Type ℓ} (B : A → Type ℓ') {x y : A} (p : x ≡ y) → B x → B y
-subst B refl Bx = Bx
+subst B refl b = b
 
 true≢false : ¬ true ≡ false
 true≢false tf = subst (λ { false → ⊥
                          ; true → true ≡ false }) tf tf
 
 transport : {A B : Type ℓ} → A ≡ B → A → B
-transport e a = subst (λ z → z) e a
+transport e a = subst id e a
 
 subst' : {A : Type ℓ} (B : A → Type ℓ') {x y : A} (p : x ≡ y) → B x → B y
 subst' B p x = transport (cong B p) x
