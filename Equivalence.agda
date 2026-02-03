@@ -104,7 +104,7 @@ infix   1 _■
 
 equivEq : {A : Type ℓ} {B : Type ℓ'} {e e' : A ≃ B} → equivFun e ≡ equivFun e' → e ≡ e'
 equivEq {ℓ} {ℓ'} {A} {B} {f , fL , fR} {g , gL , gR} refl with isEquiv→hasQInv f (fL , fR) | isEquiv→hasQInv g (gL , gR)
-... | f' , fleft , fright | g' , gleft , gright = Σ≡ refl (Σ≡ {! !} {! !})
+... | f' , fleft , fright | g' , gleft , gright = Σ≡ refl (isPropIsEquiv f (fL , fR) (gL , gR))
 
 points≃ : (A : Type ℓ) → A ≃ (⊤ → A)
 points≃ A = (λ z z₁ → z) , ((λ z → z tt) , λ x → refl) , (λ z → id z tt) , (λ x → refl)
