@@ -27,23 +27,54 @@ univalence = pathToEquiv , isEquivPathToEquiv
 ua : {A B : Type ℓ} → A ≃ B → A ≡ B
 ua {A = A} {B = B} = invEq univalence
 
+uaβ : {A B : Type ℓ} (e : A ≃ B) → transport (ua e) ≡ equivFun e
+uaβ {A = A} {B = B} e = cong fst (secEq univalence e)
+
+uaη : {A B : Type ℓ} (p : A ≡ B) → ua (pathToEquiv p) ≡ p
+uaη p = retEq univalence p
+
+uaIdEquiv : {A : Type ℓ} → ua (idEquiv {A = A}) ≡ refl
+uaIdEquiv = uaη refl
+
+isContr≃≡⊤ : {A : Type} → isContr A ≃ (A ≡ ⊤)
+isContr≃≡⊤ {A = A} = isoToEquiv (f , g , gf , fg)
+ where
+ f : isContr A → A ≡ ⊤
+ f = ua ∘ isContr→≃⊤
+
+ g : A ≡ ⊤ → isContr A
+ g = ≃⊤→isContr ∘ pathToEquiv
+
+ gf : (x : isContr A) → g (f x) ≡ id x
+ gf x = ((≃⊤→isContr ∘ pathToEquiv) ∘ (ua ∘ isContr→≃⊤)) x ≡⟨ refl ⟩
+  (≃⊤→isContr ∘ (pathToEquiv ∘ ua) ∘ isContr→≃⊤) x ≡⟨ cong ≃⊤→isContr (secEq univalence (isContr→≃⊤ x)) ⟩
+  (≃⊤→isContr ∘ id ∘ isContr→≃⊤) x ≡⟨ refl ⟩
+  (≃⊤→isContr ∘ isContr→≃⊤) x ≡⟨ isContrInv x ⟩
+  id x ≡⟨ refl ⟩
+  x ∎
+  where
+  isContrInv : (≃⊤→isContr ∘ isContr→≃⊤) ~ id
+  isContrInv x = refl
+
+ fg : (x : A ≡ ⊤) → f (g x) ≡ id x
+ fg refl = uaIdEquiv
+
+is¬≃≡⊥ : {A : Type} → (¬ A) ≃ (A ≡ ⊥)
+is¬≃≡⊥ {A = A} = isoToEquiv (f , g , gf , fg)
+ where
+ f : ¬ A → A ≡ ⊥
+ f x = {! !}
+
+ g : A ≡ ⊥ → ¬ A
+ g refl x = x
+
+ gf : ?
+ gf = ?
+
+ fg : ?
+ fg = ?
+
 postulate
- uaβ : {A B : Type ℓ} (e : A ≃ B) → transport (ua e) ≡ equivFun e
- -- uaβ {A = A} {B = B} e =
- --  let elim , (intro , computation) , uniqueness = univalence {A = A} {B = B} in
- --  secEq {! !} {! !}
-
- uaη : {A B : Type ℓ} (p : A ≡ B) → ua (pathToEquiv p) ≡ p
- -- uaη {A = A} {B = B} =
- --  let elim , computation , uniqueness = univalence {A = A} {B = B} in
- --  {! !}
-
- uaIdEquiv : {A : Type ℓ} → ua (idEquiv {A = A}) ≡ refl
-
- isContr≃≡⊤ : {A : Type} → isContr A ≃ (A ≡ ⊤)
-
- is¬≃≡⊥ : {A : Type} → (¬ A) ≃ (A ≡ ⊥)
-
  ≃ind : (P : {A B : Type ℓ} → (A ≃ B) → Type ℓ') →
         ({A : Type ℓ} → P (idEquiv {A = A})) →
         {A B : Type ℓ} (e : A ≃ B) → P e
