@@ -27,15 +27,31 @@ univalence = pathToEquiv , isEquivPathToEquiv
 ua : {A B : Type ℓ} → A ≃ B → A ≡ B
 ua {A = A} {B = B} = invEq univalence
 
-uaβ : {A B : Type ℓ} (e : A ≃ B) → transport (ua e) ≡ equivFun e
-uaβ {A = A} {B = B} e =
- let elim , (intro , computation) , uniqueness = univalence {A = A} {B = B} in
- secEq {! !} {! !}
+postulate
+ uaβ : {A B : Type ℓ} (e : A ≃ B) → transport (ua e) ≡ equivFun e
+ -- uaβ {A = A} {B = B} e =
+ --  let elim , (intro , computation) , uniqueness = univalence {A = A} {B = B} in
+ --  secEq {! !} {! !}
 
-uaη : {A B : Type ℓ} (p : A ≡ B) → ua (pathToEquiv p) ≡ p
-uaη {A = A} {B = B} =
- let elim , computation , uniqueness = univalence {A = A} {B = B} in
- {! !}
+ uaη : {A B : Type ℓ} (p : A ≡ B) → ua (pathToEquiv p) ≡ p
+ -- uaη {A = A} {B = B} =
+ --  let elim , computation , uniqueness = univalence {A = A} {B = B} in
+ --  {! !}
 
-uaIdEquiv : {A : Type ℓ} → ua (idEquiv {A = A}) ≡ refl
-uaIdEquiv = {! !}
+ uaIdEquiv : {A : Type ℓ} → ua (idEquiv {A = A}) ≡ refl
+
+ isContr≃≡⊤ : {A : Type} → isContr A ≃ (A ≡ ⊤)
+
+ is¬≃≡⊥ : {A : Type} → (¬ A) ≃ (A ≡ ⊥)
+
+ ≃ind : (P : {A B : Type ℓ} → (A ≃ B) → Type ℓ') →
+        ({A : Type ℓ} → P (idEquiv {A = A})) →
+        {A B : Type ℓ} (e : A ≃ B) → P e
+
+ ¬isSetType : ¬ (isSet Type)
+
+ ¬NNE : ¬ ((A : Type) → ¬ ¬ A → A)
+
+ ¬LEM : ¬ ((A : Type) → A ⊎ ¬ A)
+
+ decProp : Σ Type (λ A → isProp A × Dec A) ≃ Bool
