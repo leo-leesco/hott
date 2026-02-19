@@ -45,12 +45,11 @@ isContr≃≡⊤ {A = A} = isoToEquiv (f , g , gf , fg)
  g : A ≡ ⊤ → isContr A
  g = ≃⊤→isContr ∘ pathToEquiv
 
- gf : (x : isContr A) → g (f x) ≡ id x
+ gf : (x : isContr A) → g (f x) ≡ x
  gf x = ((≃⊤→isContr ∘ pathToEquiv) ∘ (ua ∘ isContr→≃⊤)) x ≡⟨ refl ⟩
   (≃⊤→isContr ∘ (pathToEquiv ∘ ua) ∘ isContr→≃⊤) x ≡⟨ cong ≃⊤→isContr (secEq univalence (isContr→≃⊤ x)) ⟩
   (≃⊤→isContr ∘ id ∘ isContr→≃⊤) x ≡⟨ refl ⟩
   (≃⊤→isContr ∘ isContr→≃⊤) x ≡⟨ isContrInv x ⟩
-  id x ≡⟨ refl ⟩
   x ∎
   where
   isContrInv : (≃⊤→isContr ∘ isContr→≃⊤) ~ id
@@ -60,19 +59,21 @@ isContr≃≡⊤ {A = A} = isoToEquiv (f , g , gf , fg)
  fg refl = uaIdEquiv
 
 is¬≃≡⊥ : {A : Type} → (¬ A) ≃ (A ≡ ⊥)
-is¬≃≡⊥ {A = A} = isoToEquiv (f , g , gf , fg)
+is¬≃≡⊥ {A = A} = ¬ A ≃⟨ isoToEquiv (f , g , gf , fg) ⟩
+ A ≃ ⊥ ≃⟨ invEquiv univalence ⟩
+ A ≡ ⊥ ■
  where
- f : ¬ A → A ≡ ⊥
- f x = {! !}
+ f : ¬ A → A ≃ ⊥
+ f x = isoToEquiv (x , (λ ()) , (λ { y → ⊥-rec (x y) }) , λ { y → ⊥-rec y })
 
- g : A ≡ ⊥ → ¬ A
- g refl x = x
+ g : (A ≃ ⊥) → (¬ A)
+ g (f , _) x = f x
 
- gf : ?
- gf = ?
+ gf : (x : ¬ A) → g (f x) ≡ x
+ gf x = {! !}
 
- fg : ?
- fg = ?
+ fg : (x : A ≃ ⊥) → f (g x) ≡ x
+ fg x = {! !}
 
 postulate
  ≃ind : (P : {A B : Type ℓ} → (A ≃ B) → Type ℓ') →
