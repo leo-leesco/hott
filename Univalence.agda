@@ -70,20 +70,40 @@ is¬≃≡⊥ {A = A} = ¬ A ≃⟨ isoToEquiv (f , g , gf , fg) ⟩
  g (f , _) x = f x
 
  gf : (x : ¬ A) → g (f x) ≡ x
- gf x = {! !}
+ gf x = refl
 
  fg : (x : A ≃ ⊥) → f (g x) ≡ x
- fg x = {! !}
+ fg x = equivEq refl
+
+≃ind : (P : {A B : Type ℓ} → (A ≃ B) → Type ℓ') → ({A : Type ℓ} → P (idEquiv {A = A})) → {A B : Type ℓ} (e : A ≃ B) → P e
+≃ind {ℓ} {ℓ'} P x {A} {B} e = subst P (secEq univalence e) Pp
+ where
+ p : A ≡ B
+ p = ua e
+
+ Pp : P (pathToEquiv p)
+ Pp = pathInduction p
+  where
+  pathInduction : (eq : A ≡ B) → P (pathToEquiv eq)
+  pathInduction refl = x
+
+¬isSetType : ¬ (isSet Type)
+¬isSetType setType = let isPropBool = setType Bool Bool in
+ let p = ua not≃ in
+ let reflNot = isPropBool p refl in
+ true≢false ( true ≡⟨ sym (happly (uaβ not≃) false) ⟩
+  transport p false ≡⟨ cong (λ { q → transport q false }) reflNot ⟩
+  transport refl false ≡⟨ refl ⟩
+  false ∎)
+
+¬NNE : ¬ ((A : Type) → ¬ ¬ A → A)
+¬NNE nne =
+ let f = nne Bool in
+ let p = ua not≃ in
+ let g = transport ? in
+ ?
 
 postulate
- ≃ind : (P : {A B : Type ℓ} → (A ≃ B) → Type ℓ') →
-        ({A : Type ℓ} → P (idEquiv {A = A})) →
-        {A B : Type ℓ} (e : A ≃ B) → P e
-
- ¬isSetType : ¬ (isSet Type)
-
- ¬NNE : ¬ ((A : Type) → ¬ ¬ A → A)
-
  ¬LEM : ¬ ((A : Type) → A ⊎ ¬ A)
 
  decProp : Σ Type (λ A → isProp A × Dec A) ≃ Bool
