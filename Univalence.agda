@@ -114,7 +114,9 @@ is¬≃≡⊥ {A = A} = ¬ A ≃⟨ isoToEquiv (f , g , gf , fg) ⟩
 
   fx'≡notfx' : f x' ≡ not (f x')
   fx'≡notfx' = f x' ≡⟨ sym (happly q x') ⟩
-   g x' ≡⟨ {! !} ⟩
+   g x' ≡⟨ happly (funTypeTransp (λ X → ¬ (¬ X)) (λ X → X) p f) x' ⟩
+   subst (λ X → X) p (f (subst (λ X → ¬ (¬ X)) (sym p) x')) ≡⟨ happly (uaβ not≃) (f (subst (λ X → ¬ (¬ X)) (sym p) x')) ⟩
+   not (f (subst (λ X → ¬ (¬ X)) (sym p) x')) ≡⟨ cong (λ { x'' → not (f x'') }) (isProp¬ (subst (λ X → ¬ (¬ X)) (sym p) x') x') ⟩
    not (f x') ∎
  in
  absurd (f x') fx'≡notfx'
