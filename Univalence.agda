@@ -98,10 +98,30 @@ is¬≃≡⊥ {A = A} = ¬ A ≃⟨ isoToEquiv (f , g , gf , fg) ⟩
 
 ¬NNE : ¬ ((A : Type) → ¬ ¬ A → A)
 ¬NNE nne =
- let f = nne Bool in
- let p = ua not≃ in
- let g = transport ? in
- ?
+ let
+  f = nne Bool
+  p = ua not≃
+  g = subst (λ { X → ¬ (¬ X) → X }) p f
+
+  q : g ≡ f
+  q = congP (λ { X → ¬ (¬ X) → X }) nne p
+
+  x : ¬ ¬ Bool
+  x nb = nb true
+
+  x' : ¬ ¬ Bool
+  x' = subst (λ { X → ¬ (¬ X) }) p x
+
+  fx'≡notfx' : f x' ≡ not (f x')
+  fx'≡notfx' = f x' ≡⟨ sym (happly q x') ⟩
+   g x' ≡⟨ {! !} ⟩
+   not (f x') ∎
+ in
+ absurd (f x') fx'≡notfx'
+ where
+  absurd : (b : Bool) → ¬ (b ≡ not b)
+  absurd false x = true≢false (sym x)
+  absurd true x = true≢false x
 
 postulate
  ¬LEM : ¬ ((A : Type) → A ⊎ ¬ A)
