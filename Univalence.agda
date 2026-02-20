@@ -125,7 +125,11 @@ is¬≃≡⊥ {A = A} = ¬ A ≃⟨ isoToEquiv (f , g , gf , fg) ⟩
   absurd false x = true≢false (sym x)
   absurd true x = true≢false x
 
-postulate
- ¬LEM : ¬ ((A : Type) → A ⊎ ¬ A)
+¬LEM : ¬ ((A : Type) → A ⊎ ¬ A)
+¬LEM x = {! !}
+ where
+  LEM→NNE : (A : Type) → A ⊎ ¬ A → ¬ ¬ A → A
+  LEM→NNE = ?
 
+postulate
  decProp : Σ Type (λ A → isProp A × Dec A) ≃ Bool
