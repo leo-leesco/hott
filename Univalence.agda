@@ -126,10 +126,48 @@ is¬≃≡⊥ {A = A} = ¬ A ≃⟨ isoToEquiv (f , g , gf , fg) ⟩
   absurd true x = true≢false x
 
 ¬LEM : ¬ ((A : Type) → A ⊎ ¬ A)
-¬LEM x = {! !}
+¬LEM lem = ¬NNE LEM→NNE
  where
-  LEM→NNE : (A : Type) → A ⊎ ¬ A → ¬ ¬ A → A
-  LEM→NNE = ?
+  LEM→NNE : ((B : Type) → ¬ ¬ B → B)
+  LEM→NNE B nnx with lem B
+  ... | inl x = x
+  ... | inr x = ⊥-rec (nnx x)
 
-postulate
- decProp : Σ Type (λ A → isProp A × Dec A) ≃ Bool
+decProp : Σ Type (λ A → isProp A × Dec A) ≃ Bool
+decProp = isoToEquiv (f , g , gf , fg)
+ where
+ f : Σ Type (λ A → isProp A × Dec A) → Bool
+ f (A , p , inl x) = true
+ f (A , p , inr x) = false
+
+ g : Bool → Σ Type (λ A → isProp A × Dec A)
+ g false = ⊥ , isProp⊥ , inr λ ()
+ g true = ⊤ , isProp⊤ , inl tt
+
+ gf : g ∘ f ~ id
+ gf (A , p , inl x) = (g ∘ f) (A , p , inl x) ≡⟨ refl ⟩
+  g true ≡⟨ refl ⟩
+  ⊤ , isProp⊤ , inl tt ≡⟨ Σ≡ (sym A≡⊤) (isProp× isPropIsProp (isPropDec prop) _ (p , inl x)) ⟩
+  A , p , inl x ∎
+  where
+  contr : isContr A
+  contr = x , p x
+
+  A≡⊤ : A ≡ ⊤
+  A≡⊤ = equivFun isContr≃≡⊤ contr
+
+  prop : isProp A
+  prop = (isContr→isProp contr)
+
+ gf (A , p , inr x) = (g ∘ f) (A , p , inr x) ≡⟨ refl ⟩
+  g false ≡⟨ refl ⟩
+  ⊥ , isProp⊥ , inr (λ ()) ≡⟨ Σ≡ (sym A≡⊥) (isProp× isPropIsProp (isPropDec p) _ (p , inr x)) ⟩
+  A , p , inr x ∎
+   where
+   A≡⊥ : A ≡ ⊥
+   A≡⊥ = equivFun is¬≃≡⊥ x
+
+
+ fg : f ∘ g ~ id
+ fg false = refl
+ fg true = refl
