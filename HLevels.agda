@@ -18,7 +18,7 @@ isContr⊤ = tt , λ y → refl
 ¬isContrBool (true , f) = true≢false (f false)
 
 isContr× : {A : Type ℓ} {B : Type ℓ'} → isContr A → isContr B → isContr (A × B)
-isContr× (x , f) (y , g) = (x , y) , λ { (x' , y') → ×pack (f x') (g y') }
+isContr× (x , f) (y , g) = (x , y) , λ { (x' , y') → ×≡ (f x') (g y') }
 
 isContr→isContrPath : {A : Type ℓ} → isContr A → (x y : A) → isContr (x ≡ y)
 isContr→isContrPath (x , f) y z = trans (sym (f y)) (f z) , λ { refl → lCancel (f y) }
@@ -65,7 +65,7 @@ isProp→isProp' : {A : Type ℓ} → isProp A → isProp' A
 isProp→isProp' f x y = isProp→isContr (isContr→isProp' λ { refl → isContr→isContrPath (x , f x) x x }) (f x y)
 
 ×packDep : {A : Type ℓ} {B : Type ℓ'} {x y : A} {f g : A → B}  → (p : x ≡ y) → (q : f ≡ g) → (x , f) ≡ (y , g)
-×packDep {ℓ} {ℓ'} {A} {B} {x} {y} {f} {g} p q = ×pack p q
+×packDep {ℓ} {ℓ'} {A} {B} {x} {y} {f} {g} p q = ×≡ p q
 
 isPropIsContr : {A : Type ℓ} → isProp (isContr A)
 isPropIsContr {A = A} (x , p) (y , q) = Σ≡ (p y) (funExt λ { z → isContr→isProp (isContr→isContrPath (x , p) y z) (subst (λ x₁ → (y₁ : A) → x₁ ≡ y₁) (p y) p z) (q z) })
@@ -74,7 +74,7 @@ isPropIsProp : {A : Type ℓ} → isProp (isProp A)
 isPropIsProp p q = funExt λ { x → funExt λ { y → isContr→isProp (isContr→isContrPath (isProp→isContr p x) x y) (p x y) (q x y) } }
 
 isProp× : {A : Type ℓ} {B : Type ℓ'} → isProp A → isProp B → isProp (A × B)
-isProp× p q (x , y) (x' , y') = ×pack (p x x') (q y y')
+isProp× p q (x , y) (x' , y') = ×≡ (p x x') (q y y')
 
 isProp⊎ : {A : Type ℓ} {B : Type ℓ'} → isProp A → isProp B → (A → B → ⊥) → isProp (A ⊎ B)
 isProp⊎ p q f (inl x) (inl y) = cong inl (p x y)
@@ -111,7 +111,7 @@ hProp : (ℓ : Level) → Type (ℓ-suc ℓ)
 hProp ℓ = Σ (Type ℓ) isProp
 
 _∧_ : hProp ℓ → hProp ℓ → hProp ℓ
-(x , p) ∧ (y , q) = x × y , λ { (x₁ , y₁) (x₂ , y₂) → ×pack (p x₁ x₂) (q y₁ y₂) }
+(x , p) ∧ (y , q) = x × y , λ { (x₁ , y₁) (x₂ , y₂) → ×≡ (p x₁ x₂) (q y₁ y₂) }
 
 sub : {A : Type ℓ} (P : A → hProp ℓ) → Type ℓ
 sub {A = A} P = Σ A (fst ∘ P)

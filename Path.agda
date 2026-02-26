@@ -40,11 +40,8 @@ symInvo refl = refl
 cong : {A : Type ℓ} {B : Type ℓ'} (f : A → B) {x y : A} (p : x ≡ y) → f x ≡ f y
 cong f refl = refl
 
-≡× : {A : Type ℓ} {B : Type ℓ'} {x x' : A} {y y' : B} → (x , y) ≡ (x' , y') → (x ≡ x') × (y ≡ y')
-≡× xy≡x'y' = cong fst xy≡x'y' , cong snd xy≡x'y'
-
-×pack : {A : Type ℓ} {B : Type ℓ'} {x x' : A} {y y' : B}  → (p : x ≡ x') → (q : y ≡ y') → (x , y) ≡ (x' , y')
-×pack refl refl = refl
+×≡ : {A : Type ℓ} {B : Type ℓ'} {x x' : A} {y y' : B} → (p : x ≡ x') (q : y ≡ y') → (x , y) ≡ (x' , y')
+×≡ refl refl = refl
 
 congConst : {A : Type ℓ} {B : Type ℓ'} {x' : B} {x y : A} (p : x ≡ y) → cong (λ _ → x') p ≡ refl
 congConst refl = refl
@@ -62,7 +59,7 @@ cong∘ : {A : Type ℓ} {B : Type ℓ'} {C : Type ℓ''} {x y : A} (f : A -> B)
 cong∘ f g refl = refl
 
 cong₂ : {A A' : Type ℓ} {B : Type ℓ'} {x y : A} {x' y' : A'} (f : A × A' -> B) (p : x ≡ y) (q : x' ≡ y') -> f (x , x') ≡ f (y , y')
-cong₂ f p q = cong f (×pack p q)
+cong₂ f p q = cong f (×≡ p q)
 
 rotate∙≡ : {A : Type ℓ} {x y y' : A} (p : x ≡ y) (q : y ≡ y') (p' : x ≡ y') → p ∙ q ≡ p' → sym p ∙ p' ≡ q
 rotate∙≡ p q p' α = sym p ∙ p' ≡⟨ cong (λ { x → sym p ∙ x }) (sym α) ⟩
@@ -114,9 +111,6 @@ substInPathsL' {ℓ} {ℓ'} {A} {B} {x} {x'} f {y} refl q = subst (λ x₁ → f
 
 PathOver : {A : Type ℓ} (B : A → Type ℓ') {x y : A} (p : x ≡ y) (x' : B x) (y' : B y) → Type ℓ'
 PathOver B p x' y' = subst B p x' ≡ y'
-
-×≡ : {A : Type ℓ} {B : Type ℓ'} {x x' : A} {y y' : B} → (p : x ≡ x') (q : y ≡ y') → (x , y) ≡ (x' , y')
-×≡ refl refl = refl
 
 Σ≡ : {A : Type ℓ} {B : A → Type ℓ'} {x x' : A} (p : x ≡ x') {y : B x} {y' : B x'} → PathOver B p y y' → (x , y) ≡ (x' , y')
 Σ≡ refl refl = refl
